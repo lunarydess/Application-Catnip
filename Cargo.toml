@@ -1,0 +1,15 @@
+[package]
+name = "Application-Catnip"
+version = "0.0.0-develop"
+edition = "2024"
+
+[dependencies]
+egui = "0.31"
+eframe = { version = "0.31", default-features = false, features = [
+    "accesskit", "default_fonts",
+    "glow", "persistence",
+    "wayland",
+] }
+env_logger = "0.11"
+serde = { version = "1", features = ["derive"] }
+egui_code_editor = { git = "https://github.com/lunarydess/Application-Catnip-Editor.git", version = "0.3.0-develop" }
