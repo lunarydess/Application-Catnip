@@ -1,5 +1,5 @@
 use eframe::Renderer;
-use Application_Catnip::CatnipApp;
+use application_catnip::CatnipApp;
 
 fn main() {
     env_logger::init();

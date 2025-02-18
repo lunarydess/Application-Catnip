@@ -1,16 +1,17 @@
 [package]
-name = "Application-Catnip"
+name = "application_catnip"
 version = "0.0.0-develop"
 edition = "2024"
 
 [dependencies]
 egui = "0.31"
 eframe = { version = "0.31", default-features = false, features = [
-    "accesskit", "default_fonts",
-    "glow", "persistence",
-    "wayland",
+  "accesskit", "default_fonts",
+  "glow", "persistence",
+  "wayland", "wgpu"
 ] }
 rfd = "0.15"
 env_logger = "0.11"
 serde = { version = "1", features = ["derive"] }
 egui_code_editor = { git = "https://github.com/lunarydess/Application-Catnip-Editor.git", version = "0.3.0-develop" }
+egui-modal = { git = "https://github.com/mkrueger/egui-modal.git", branch = "mkrueger/egui0.31"}

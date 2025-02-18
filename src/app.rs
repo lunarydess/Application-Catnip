@@ -1,8 +1,8 @@
-use std::fs;
 use eframe::epaint::text::TextWrapMode;
-use egui::{TextBuffer, ThemePreference};
+use egui::ThemePreference;
 use egui_code_editor::{CodeEditor, ColorTheme, Syntax, DEFAULT_THEMES};
-use std::option::Option;
+use egui_modal::Modal;
+use std::fs;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -43,14 +43,36 @@ impl eframe::App for CatnipApp {
         // top bar
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
+                let modal = Modal::new(ctx, "open folder modal :3");
+                modal.show(|ui| {
+                    modal.title(ui, "Hello world!");
+                    modal.frame(ui, |ui| {
+                        modal.body(ui, "This is a modal.");
+                    });
+                    modal.buttons(ui, |ui| {
+                        if modal.button(ui, "close").clicked() {
+                            println!("Hello world!")
+                        };
+                    });
+                });
+
                 let is_web = cfg!(target_arch = "wasm32");
                 if !is_web {
                     ui.menu_button("File", |ui| {
-                        if ui.button("Open …").clicked() {
-                            if let Some(path) = rfd::FileDialog::new().pick_file() {
-                                self.editor_text = fs::read_to_string(path.display().to_string()).unwrap();
+                        ui.menu_button("New …", |_| {});
+                        ui.menu_button("Open …", |ui| {
+                            if ui.button("File").clicked() {
+                                if let Some(path) = rfd::FileDialog::new().pick_file() {
+                                    self.editor_text =
+                                        fs::read_to_string(path.display().to_string()).unwrap();
+                                }
                             }
-                        }
+                            if ui.button("Folder").clicked() {
+                                if !modal.is_open() {
+                                    modal.open();
+                                }
+                            }
+                        });
                         if ui.button("Quit").clicked() {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
