@@ -10,6 +10,7 @@ eframe = { version = "0.31", default-features = false, features = [
     "glow", "persistence",
     "wayland",
 ] }
+rfd = "0.15"
 env_logger = "0.11"
 serde = { version = "1", features = ["derive"] }
 egui_code_editor = { git = "https://github.com/lunarydess/Application-Catnip-Editor.git", version = "0.3.0-develop" }

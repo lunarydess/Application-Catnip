@@ -1,31 +1,35 @@
+use std::fs;
 use eframe::epaint::text::TextWrapMode;
-use egui::ThemePreference;
+use egui::{TextBuffer, ThemePreference};
 use egui_code_editor::{CodeEditor, ColorTheme, Syntax, DEFAULT_THEMES};
+use std::option::Option;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
-pub struct TemplateApp {
+pub struct CatnipApp {
     label: String,
     #[serde(skip)]
     editor_theme: ColorTheme,
     #[serde(skip)]
     editor_syntax: Syntax,
+    editor_text: String,
     #[serde(skip)]
     value: f32,
 }
 
-impl Default for TemplateApp {
+impl Default for CatnipApp {
     fn default() -> Self {
         Self {
             label: "Hello World!".to_owned(),
             editor_theme: ColorTheme::default(),
             editor_syntax: Syntax::default(),
+            editor_text: "".to_owned(),
             value: 2.7,
         }
     }
 }
 
-impl TemplateApp {
+impl CatnipApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         if let Some(storage) = cc.storage {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
@@ -34,7 +38,7 @@ impl TemplateApp {
     }
 }
 
-impl eframe::App for TemplateApp {
+impl eframe::App for CatnipApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // top bar
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
@@ -42,6 +46,11 @@ impl eframe::App for TemplateApp {
                 let is_web = cfg!(target_arch = "wasm32");
                 if !is_web {
                     ui.menu_button("File", |ui| {
+                        if ui.button("Open …").clicked() {
+                            if let Some(path) = rfd::FileDialog::new().pick_file() {
+                                self.editor_text = fs::read_to_string(path.display().to_string()).unwrap();
+                            }
+                        }
                         if ui.button("Quit").clicked() {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
@@ -70,10 +79,9 @@ impl eframe::App for TemplateApp {
                         .wrap_mode(TextWrapMode::Wrap)
                         .selected_text(format!("{:?}", &self.editor_theme.name))
                         .show_ui(ui, |ui| {
-                            let themes = DEFAULT_THEMES.iter().clone();
-                            for theme in themes {
+                            DEFAULT_THEMES.iter().clone().for_each(|theme| {
                                 ui.selectable_value(&mut self.editor_theme, *theme, theme.name);
-                            }
+                            });
                         });
 
                     // syntax selector
@@ -106,7 +114,7 @@ impl eframe::App for TemplateApp {
                     .with_theme(self.editor_theme)
                     .with_syntax(self.editor_syntax.clone())
                     .with_numlines(true)
-                    .show(ui, &mut self.label);
+                    .show(ui, &mut self.editor_text);
             });
 
             // header example:

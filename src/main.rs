@@ -1,10 +1,10 @@
 use eframe::Renderer;
-use Application_Catnip::TemplateApp;
+use Application_Catnip::CatnipApp;
 
 fn main() {
     env_logger::init();
     eframe::run_native(
-        "Meow",
+        "Catnip Editor",
         eframe::NativeOptions {
             centered: true,
             renderer: Renderer::Glow,
@@ -13,7 +13,7 @@ fn main() {
                 .with_min_inner_size([300.0, 220.0]),
             ..Default::default()
         },
-        Box::new(|context| Ok(Box::new(TemplateApp::new(context)))),
+        Box::new(|context| Ok(Box::new(CatnipApp::new(context)))),
     )
     .expect("TODO: panic message");
 }
