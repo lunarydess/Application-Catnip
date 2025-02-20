@@ -1,7 +1,14 @@
 [package]
 name = "application_catnip"
 version = "0.0.0-develop"
+authors = ["lunarydess"]
+license = "Apache-2.0"
 edition = "2024"
+rust-version = "1.85"
+publish = false
+
+[package.metadata.cargo-machete]
+ignored = ["image"]
 
 [dependencies]
 egui = "0.31"
@@ -11,7 +18,12 @@ eframe = { version = "0.31", default-features = false, features = [
   "wayland", "wgpu"
 ] }
 rfd = "0.15"
-env_logger = "0.11"
+env_logger = { version = "0.11", default-features = false, features = [
+  "auto-color",
+  "humantime",
+] }
 serde = { version = "1", features = ["derive"] }
-egui_code_editor = { git = "https://github.com/lunarydess/Application-Catnip-Editor.git", version = "0.3.0-develop" }
-egui-modal = { git = "https://github.com/mkrueger/egui-modal.git", branch = "mkrueger/egui0.31"}
+egui_code_editor = { git = "https://github.com/lunarydess/Application-Catnip-Editor.git", version = "0.3.0-develop", rev = "0754452" }
+egui-modal = { git = "https://github.com/mkrueger/egui-modal.git", branch = "mkrueger/egui0.31" }
+egui_extras = {version = "0.31", default-features = false, features = ["default", "all_loaders"]}
+image = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
