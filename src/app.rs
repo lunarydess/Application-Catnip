@@ -48,10 +48,8 @@ impl eframe::App for CatnipApp {
                 modal.body(ui, "This is a modal.");
             });
             modal.buttons(ui, |ui| {
-                if modal.button(ui, "meow").clicked() {
-                };
-                if modal.button(ui, "close").clicked() {
-                };
+                if modal.button(ui, "meow").clicked() {};
+                if modal.button(ui, "close").clicked() {};
             });
         });
 
@@ -82,8 +80,6 @@ impl eframe::App for CatnipApp {
 
         // main content
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.image(egui::include_image!("leaf.png"))
-                .on_hover_text_at_pointer("test meow");
             ui.with_layout(egui::Layout::left_to_right(Align::Max), |ui| {
                 CodeEditor::default()
                     .id_source("cat editor :3")
@@ -118,50 +114,53 @@ impl eframe::App for CatnipApp {
                 ui.label(" with ♡");
 
                 ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
-                    // editor theme selector
-                    egui::ComboBox::from_label("Theme")
-                        .wrap_mode(TextWrapMode::Wrap)
-                        .selected_text(format!("{:?}", &self.editor_theme.name))
-                        .show_ui(ui, |ui| {
-                            DEFAULT_THEMES.iter().clone().for_each(|theme| {
-                                ui.selectable_value(&mut self.editor_theme, *theme, theme.name);
+                    ui.menu_image_button(egui::include_image!("cogwheel.svg"), |ui| {
+                        // syntax selector
+                        egui::ComboBox::from_label("Syntax")
+                            .wrap_mode(TextWrapMode::Wrap)
+                            .selected_text(format!("{:?}", &self.editor_syntax.language))
+                            .show_ui(ui, |ui| {
+                                [
+                                    Syntax::asm(),
+                                    Syntax::shell(),
+                                    Syntax::sql(),
+                                    Syntax::lua(),
+                                    Syntax::rust(),
+                                    Syntax::python(),
+                                    Syntax::java(),
+                                ]
+                                    .iter()
+                                    .for_each(|syntax| {
+                                        ui.selectable_value(
+                                            &mut self.editor_syntax,
+                                            syntax.clone(),
+                                            syntax.language,
+                                        );
+                                    });
                             });
-                        });
 
-                    // syntax selector
-                    egui::ComboBox::from_label("Syntax")
-                        .wrap_mode(TextWrapMode::Wrap)
-                        .selected_text(format!("{:?}", &self.editor_syntax.language))
-                        .show_ui(ui, |ui| {
-                            [
-                                Syntax::asm(),
-                                Syntax::shell(),
-                                Syntax::sql(),
-                                Syntax::lua(),
-                                Syntax::rust(),
-                                Syntax::python(),
-                                Syntax::java(),
-                            ]
-                            .iter()
-                            .for_each(|syntax| {
-                                ui.selectable_value(
-                                    &mut self.editor_syntax,
-                                    syntax.clone(),
-                                    syntax.language,
-                                );
+                        // theme selector
+                        let mut theme = ui.ctx().options(|opt| opt.theme_preference);
+                        egui::ComboBox::from_label("Theme")
+                            .wrap_mode(TextWrapMode::Wrap)
+                            .selected_text(format!("{:?}", theme))
+                            .show_ui(ui, |ui| {
+                                ui.selectable_value(&mut theme, ThemePreference::System, "💻 System", );
+                                ui.selectable_value(&mut theme, ThemePreference::Light, "☀ Light");
+                                ui.selectable_value(&mut theme, ThemePreference::Dark, "🌙 Dark");
                             });
-                        });
+                        ui.ctx().set_theme(theme);
 
-                    let mut theme = ui.ctx().options(|opt| opt.theme_preference);
-                    egui::ComboBox::from_label("")
-                        .wrap_mode(TextWrapMode::Wrap)
-                        .selected_text(format!("{:?}", theme))
-                        .show_ui(ui, |ui| {
-                            ui.selectable_value(&mut theme, ThemePreference::System, "💻 System");
-                            ui.selectable_value(&mut theme, ThemePreference::Light, "☀ Light");
-                            ui.selectable_value(&mut theme, ThemePreference::Dark, "🌙 Dark");
-                        });
-                    ui.ctx().set_theme(theme);
+                        // scheme selector
+                        egui::ComboBox::from_label("Scheme")
+                            .wrap_mode(TextWrapMode::Wrap)
+                            .selected_text(format!("{:?}", &self.editor_theme.name))
+                            .show_ui(ui, |ui| {
+                                DEFAULT_THEMES.iter().clone().for_each(|theme| {
+                                    ui.selectable_value(&mut self.editor_theme, *theme, theme.name);
+                                });
+                            });
+                    });
                 });
             });
         });
